@@ -1,0 +1,44 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class PlayerHealth : MonoBehaviour
+{
+    public int MaxLives = 3;                            //최대 생명력
+    public int currentLives = 1;                        //현재 생명력
+
+    public float invincibleTime = 1.0f;                 //피격 후 무적 시간
+    public bool isInvincible = false;                   //무적 여부의 값
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        currentLives = MaxLives;                        //생명력 초기화
+    }
+
+    // Update is called once per frame
+    void OnTriggerEnter(Collider other)         //트리거 영역 안에 들어왔다를 감시하는 함수
+    {
+        //미사일 충돌 검사
+        if (other.CompareTag("Missile"))
+        {
+            currentLives--;
+            Destroy(other.gameObject);                                            //미사일 오브젝트를 제거한다.
+            if (currentLives <= 0)
+            {
+                GameOver();
+            }                                       //미사일과 충돌시 1씩 생명력을 제거 한다.
+        }
+    }
+
+    public void GameOver()              //게임 오버 처리
+    {
+        gameObject.SetActive(false);                        //플레이어 비활성화
+        Invoke("RestartGame", 3.0f);                        //3초 후 현재 씬 재시작
+    }
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);     //현재 씬 재시작
+    }
+}
